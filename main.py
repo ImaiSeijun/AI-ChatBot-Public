@@ -28,7 +28,6 @@ configuration = Configuration(access_token='')
 
 GEMINI_API_KEY = ""
 
-# Geminiの設定
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
 
@@ -40,14 +39,11 @@ f.close()
 
 @app.route("/callback", methods=['POST'])
 def callback():
-    # get X-Line-Signature header value
     signature = request.headers['X-Line-Signature']
 
-    # get request body as text
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
 
-    # handle webhook body
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
@@ -68,7 +64,6 @@ def chat_with_gemini(user_input: str) -> str:
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
     with ApiClient(configuration) as api_client:
-        #相手の送信した内容で条件分岐して回答を変数に代入
         line_msg = event.message.text
         
         msg = chat_with_gemini(setting_sentences + line_msg)
